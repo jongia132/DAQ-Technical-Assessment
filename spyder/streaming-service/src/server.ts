@@ -18,13 +18,34 @@ tcpServer.on("connection", (socket) => {
     const message: string = msg.toString();
 
     console.log(`Received: ${message}`);
+
+    const data: VehicleData = JSON.parse(message);
+    const temp = parseFloat(data.battery_temperature.toString());
     
     // Send JSON over WS to frontend clients
     websocketServer.clients.forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
+        if (!Number.isNaN(temp)) client.send(message);
       }
     });
+
+    // Safe range warning
+    let warningThreshhold = 0;
+
+    // Only run temp check if real values are recieved
+    if (!Number.isNaN(temp)) {
+      if (temp < 20 || temp > 80) {
+        warningThreshhold++;
+      } else {
+        warningThreshhold = 0;
+      }
+
+      if (warningThreshhold > 3) {
+        console.warn(`Battery Temperature Exceeding Safe limit at ${data.timestamp}`);
+      }
+    }
+
+
   });
 
   socket.on("end", () => {
