@@ -11,6 +11,9 @@ const WS_PORT = 8080;
 const tcpServer = net.createServer();
 const websocketServer = new WebSocketServer({ port: WS_PORT });
 
+// Safe range warning
+let warningThreshhold = 0;
+
 tcpServer.on("connection", (socket) => {
   console.log("TCP client connected");
 
@@ -20,20 +23,18 @@ tcpServer.on("connection", (socket) => {
     console.log(`Received: ${message}`);
 
     const data: VehicleData = JSON.parse(message);
-    const temp = parseFloat(data.battery_temperature.toString());
     
     // Send JSON over WS to frontend clients
     websocketServer.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        if (!Number.isNaN(temp)) client.send(message);
+      if (client.readyState === WebSocket.OPEN && typeof(data.battery_temperature) === 'number') {
+          client.send(message);
       }
     });
 
-    // Safe range warning
-    let warningThreshhold = 0;
-
     // Only run temp check if real values are recieved
-    if (!Number.isNaN(temp)) {
+    if (typeof(data.battery_temperature) === 'number') {
+      const temp = data.battery_temperature;
+
       if (temp < 20 || temp > 80) {
         warningThreshhold++;
       } else {
