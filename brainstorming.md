@@ -19,4 +19,6 @@ I was going to originally have the build and start commands watch the src folder
 
 4. The button is not changing because the useEffect hook has been created with an empty array, meaning it will only run once on client load. To fix this, we can add the readyState variable inside the array of the useEffect hook so that it reruns whenever that value changes.
 
+5. Using tailwind text colour classes, I used the provided cn function to conditionally apply the correct class based on the temp range. I used switch statements as they are more easy to extend if additional ranges are requested which use Typescript enums for the different ranges.
+
 ## Cloud

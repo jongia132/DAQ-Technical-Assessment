@@ -26,7 +26,7 @@ interface VehicleData {
  */
 export default function Page(): JSX.Element {
   const { setTheme } = useTheme()
-  const [temperature, setTemperature] = useState<any>(0)
+  const [temperature, setTemperature] = useState<number>(0)
   const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected")
   const { lastJsonMessage, readyState }: { lastJsonMessage: VehicleData | null; readyState: ReadyState } = useWebSocket(
     WS_URL,
@@ -98,7 +98,7 @@ export default function Page(): JSX.Element {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-center">
-            <Numeric temp={temperature} />
+            <Numeric temp={temperature.toFixed(3)} />
           </CardContent>
         </Card>
       </main>

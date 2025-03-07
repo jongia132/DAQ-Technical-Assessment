@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils";
+
 interface TemperatureProps {
   temp: any;
 }
@@ -16,9 +18,26 @@ function Numeric({ temp }: TemperatureProps) {
   //  - (or) other solution
 
   // Justify your choice of implementation in brainstorming.md
+  enum range {
+    unsafe,
+    warn,
+    safe
+  }
+  
+  let status: number;
+  switch (true) {
+    case (temp < 20 || temp > 80):
+      status = range.unsafe;
+      break;
+    case (temp <= 25 || temp >= 75):
+      status = range.warn;
+      break;
+    default:
+      status = range.safe;
+  }
 
   return (
-    <div className="text-foreground text-4xl font-bold">
+    <div className={`${cn({'text-red-500': status === range.unsafe, 'text-yellow-500': status === range.warn, 'text-green-500': status === range.safe})} "text-foreground text-4xl font-bold"`}>
       {`${temp}°C`}
     </div>
   );
