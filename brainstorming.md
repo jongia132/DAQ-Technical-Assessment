@@ -6,7 +6,12 @@ This file is used to document your thoughts, approaches and research conducted a
 
 ## Spyder
 
-1.
+1. Knowing that the application needs to reload in a production environment, nodemon needs to trigger on any change within the src directory as even static files such as icons or images need to be bundled by the Next.js compiler. To do this, I created a new package script called `watch` which uses nodemon to run both the build and start commands together, watching the src directory for any changes.
+
+To complete, the dockerfile was modified to not run the built in build command but instead just use the new watch script.
+Nodemon by default watches only basic extensions so I had to add the global operator. Originally this was really simple but then docker runs using shell, not bash which causes the asterisk symbol to instead provide the directory listing to the build command. I used escape characters so that the command would work across all systems as a workaround. It also seems to have trouble detecting for file changes normally, so using the legacy file watcher argument it correctly works.
+
+I was going to originally have the build and start commands watch the src folder and .next folder respectively to minimise downtime, but the next build process is slightly dynamic and it was difficult to get nodemon to track a specific file for modification that would represent the final build completion.
 
 2. The only correct type of value that should be displayed is of type number, or a floating point value. From the logs, the data emulator sometimes sends strings of binary data which may not be relevant to the display. Before the streaming server sends any value, I parsed the data recieved from the websocket connection into a JavaScript object assigning the type VehicleData. Then, I used parseFloat to check if the value is an actual number or floating point and used isNaN to check for the side effect of the parseFloat function. If it is a number, I allow the data to be sent otherwise it will get ignored. This allows valid binary streams to be parsed and sent while discarding those with invalid values.
 

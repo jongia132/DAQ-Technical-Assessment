@@ -27,7 +27,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "watch": "nodemon --watch src --ext \"*\" --exec \"next build && next start\" --legacy-watch"
   },
   "eslintConfig": {
     "extends": [
