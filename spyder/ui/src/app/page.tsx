@@ -18,6 +18,43 @@ interface VehicleData {
   timestamp: number
 }
 
+import { Moon, Sun } from "lucide-react"
+ 
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+ 
+export function ModeToggle() {
+  const { setTheme } = useTheme()
+ 
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon">
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
+          System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 /**
  * Page component that displays DAQ technical assessment. Contains the LiveValue component as well as page header and labels.
  * Could this be split into more components?...
@@ -70,21 +107,28 @@ export default function Page(): JSX.Element {
   }, [lastJsonMessage])
 
   /**
-   * Effect hook to set the theme to dark mode.
+   * Effect hook to swap the theme logo.
    */
+  const [logo, setLogo] = useState(RedbackLogoDarkMode)
+  const theme = useTheme().theme
   useEffect(() => {
-    setTheme("dark")
-  }, [setTheme])
+    if (theme === 'light') {
+      setLogo(RedbackLogoLightMode)
+    } else {
+      setLogo(RedbackLogoDarkMode)
+    }
+  }, [useTheme().theme])
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="px-5 h-20 flex items-center gap-5 border-b">
         <Image
-          src={RedbackLogoDarkMode}
+          src={logo}
           className="h-12 w-auto"
           alt="Redback Racing Logo"
         />
         <h1 className="text-foreground text-xl font-semibold">DAQ Technical Assessment</h1>
+        <ModeToggle />
         <Badge variant={connectionStatus === "Connected" ? "success" : "destructive"} className="ml-auto">
           {connectionStatus}
         </Badge>
