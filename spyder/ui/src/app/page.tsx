@@ -10,16 +10,7 @@ import { Thermometer } from "lucide-react"
 import Numeric from "../components/custom/numeric"
 import RedbackLogoDarkMode from "../../public/logo-darkmode.svg"
 import RedbackLogoLightMode from "../../public/logo-lightmode.svg"
-
-const WS_URL = "ws://localhost:8080"
-
-interface VehicleData {
-  battery_temperature: number
-  timestamp: number
-}
-
 import { Moon, Sun } from "lucide-react"
- 
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -27,6 +18,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+
+const WS_URL = "ws://localhost:8080"
+
+interface VehicleData {
+  battery_temperature: number
+  timestamp: number
+}
  
 export function ModeToggle() {
   const { setTheme } = useTheme()
@@ -47,9 +45,6 @@ export function ModeToggle() {
         <DropdownMenuItem onClick={() => setTheme("dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -62,7 +57,6 @@ export function ModeToggle() {
  * @returns {JSX.Element} The rendered page component.
  */
 export default function Page(): JSX.Element {
-  const { setTheme } = useTheme()
   const [temperature, setTemperature] = useState<number>(0)
   const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected")
   const { lastJsonMessage, readyState }: { lastJsonMessage: VehicleData | null; readyState: ReadyState } = useWebSocket(
@@ -111,13 +105,14 @@ export default function Page(): JSX.Element {
    */
   const [logo, setLogo] = useState(RedbackLogoDarkMode)
   const theme = useTheme().theme
+
   useEffect(() => {
     if (theme === 'light') {
       setLogo(RedbackLogoLightMode)
     } else {
       setLogo(RedbackLogoDarkMode)
     }
-  }, [useTheme().theme])
+  }, [useTheme()])
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
