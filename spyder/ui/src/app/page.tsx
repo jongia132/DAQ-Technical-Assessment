@@ -18,10 +18,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Chart } from "@/components/custom/chart"
 
 const WS_URL = "ws://localhost:8080"
 
-interface VehicleData {
+export interface VehicleData {
   battery_temperature: number
   timestamp: number
 }
@@ -58,6 +59,7 @@ export function ModeToggle() {
  */
 export default function Page(): JSX.Element {
   const [temperature, setTemperature] = useState<number>(0)
+  const [history, setHistory] = useState<VehicleData[]>([])
   const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected")
   const { lastJsonMessage, readyState }: { lastJsonMessage: VehicleData | null; readyState: ReadyState } = useWebSocket(
     WS_URL,
@@ -98,6 +100,10 @@ export default function Page(): JSX.Element {
       return
     }
     setTemperature(lastJsonMessage.battery_temperature)
+
+    const temp = history.slice(-9)
+    console.log(temp.push(lastJsonMessage))
+    setHistory(temp)
   }, [lastJsonMessage])
 
   /**
@@ -128,7 +134,7 @@ export default function Page(): JSX.Element {
           {connectionStatus}
         </Badge>
       </header>
-      <main className="flex-grow flex items-center justify-center p-8">
+      <main className="flex-grow flex items-center justify-center p-8 flex-col gap-8">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-2xl font-light flex items-center gap-2">
@@ -140,6 +146,7 @@ export default function Page(): JSX.Element {
             <Numeric temp={temperature.toFixed(3)} />
           </CardContent>
         </Card>
+        <Chart data={history} />
       </main>
     </div>
   )
