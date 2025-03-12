@@ -21,4 +21,11 @@ I was going to originally have the build and start commands watch the src folder
 
 5. Using tailwind text colour classes, I used the provided cn function to conditionally apply the correct class based on the temp range. I used switch statements as they are more easy to extend if additional ranges are requested which use Typescript enums for the different ranges.
 
+### Additional Features
+1. Light/Dark mode toggle using the provided component from shadcn since it implemented well with the existing next-theme toggle.
+
+2. Realtime graph also using shadcn adding recharts as an additional package. This also uses tailwind for styling and I customised it to add the same warning thresholds visually.
+
+3. 
+
 ## Cloud
