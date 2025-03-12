@@ -36,10 +36,6 @@ export function Chart({data}: {data: VehicleData[]}) {
           <LineChart
             accessibilityLayer
             data={data}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
           >
             <CartesianGrid vertical={false} />
             <XAxis
@@ -56,7 +52,7 @@ export function Chart({data}: {data: VehicleData[]}) {
               tickMargin={5}
             />
             <ChartTooltip
-              cursor={true}
+              cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
             <Line
