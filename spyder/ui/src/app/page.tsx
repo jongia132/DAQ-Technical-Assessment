@@ -102,7 +102,6 @@ export default function Page(): JSX.Element {
     setTemperature(lastJsonMessage.battery_temperature)
 
     const temp = history.slice(-9)
-    console.log(temp.push(lastJsonMessage))
     setHistory(temp)
   }, [lastJsonMessage])
 

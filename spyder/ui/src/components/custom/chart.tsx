@@ -1,6 +1,6 @@
 "use client"
 
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
+import { CartesianGrid, Line, LineChart, ReferenceArea, XAxis, YAxis } from "recharts"
 
 import {
   Card,
@@ -52,8 +52,7 @@ export function Chart({data}: {data: VehicleData[]}) {
               tickMargin={5}
             />
             <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent labelKey="battery_temperature" nameKey="battery_temperature" />}
             />
             <Line
               dataKey="battery_temperature"
@@ -64,6 +63,28 @@ export function Chart({data}: {data: VehicleData[]}) {
               dot={true}
               unit={"°C"}
               isAnimationActive={false}
+            />
+            {/* Unsafe */}
+            <ReferenceArea
+            y1={80}
+            fill="red"
+            />
+            <ReferenceArea
+            y1={0}
+            y2={20}
+            fill="red"
+            />
+
+            {/* Warn */}
+            <ReferenceArea
+            y1={20}
+            y2={25}
+            fill="orange"
+            />
+            <ReferenceArea
+            y1={75}
+            y2={80}
+            fill="orange"
             />
           </LineChart>
         </ChartContainer>
