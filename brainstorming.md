@@ -26,6 +26,6 @@ I was going to originally have the build and start commands watch the src folder
 
 2. Realtime graph also using shadcn adding recharts as an additional package. This also uses tailwind for styling and I customised it to add the same warning thresholds visually.
 
-3. 
+3. General log viewer that shows any notable events that happen. Built using shadcn table component and tailwind styling. It shows the last 100 logged entries and currently logs the time when the temperature goes out of the safe zone.
 
 ## Cloud

@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Chart } from "@/components/custom/chart"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import Logs from "@/components/custom/logs"
 
 const WS_URL = "ws://localhost:8080"
 
@@ -97,7 +97,6 @@ export default function Page(): JSX.Element {
    * Effect hook to handle incoming WebSocket messages.
    */
   useEffect(() => {
-    console.log("Received: ", lastJsonMessage)
     if (lastJsonMessage === null) {
       return
     }
@@ -109,10 +108,12 @@ export default function Page(): JSX.Element {
     setHistory(temp)
 
     if (lastJsonMessage.battery_temperature < 20 || lastJsonMessage.battery_temperature > 80) {
-      logs.slice(-99).push({ data: "Battery Temperature unsafe", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
+      logs.slice(-99)
+      logs.push({ data: "Battery Temperature unsafe", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
       setLogs(logs)
     } else if (lastJsonMessage.battery_temperature <= 25 || lastJsonMessage.battery_temperature >= 75) {
-      logs.slice(-99).push({ data: "Battery Temperature warning", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
+      logs.slice(-99)
+      logs.push({ data: "Battery Temperature warning", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
       setLogs(logs)
     }
   }, [lastJsonMessage])
@@ -166,22 +167,7 @@ export default function Page(): JSX.Element {
               Logs
             </CardTitle>
             <CardContent className="p-0 overflow-auto max-h-[450px]">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Message</TableHead>
-                    <TableHead>Time</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {logs.toReversed().map((content, key) =>
-                    <TableRow key={key}>
-                      <TableCell>{content.data}</TableCell>
-                      <TableCell>{content.time}</TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+              <Logs logs={logs} />
             </CardContent>
           </CardHeader>
         </Card>
