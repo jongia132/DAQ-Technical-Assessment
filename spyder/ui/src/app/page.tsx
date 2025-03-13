@@ -109,10 +109,10 @@ export default function Page(): JSX.Element {
     setHistory(temp)
 
     if (lastJsonMessage.battery_temperature < 20 || lastJsonMessage.battery_temperature > 80) {
-      logs.push({ data: "Battery Temperature unsafe", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
+      logs.slice(-99).push({ data: "Battery Temperature unsafe", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
       setLogs(logs)
     } else if (lastJsonMessage.battery_temperature <= 25 || lastJsonMessage.battery_temperature >= 75) {
-      logs.push({ data: "Battery Temperature warning", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
+      logs.slice(-99).push({ data: "Battery Temperature warning", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
       setLogs(logs)
     }
   }, [lastJsonMessage])
