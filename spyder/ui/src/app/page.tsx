@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Chart } from "@/components/custom/chart"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 const WS_URL = "ws://localhost:8080"
 
@@ -26,10 +27,10 @@ export interface VehicleData {
   battery_temperature: number
   timestamp: number
 }
- 
+
 export function ModeToggle() {
   const { setTheme } = useTheme()
- 
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -60,6 +61,7 @@ export function ModeToggle() {
 export default function Page(): JSX.Element {
   const [temperature, setTemperature] = useState<number>(0)
   const [history, setHistory] = useState<VehicleData[]>([])
+  const [logs, setLogs] = useState<{ data: string, time: string }[]>([])
   const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected")
   const { lastJsonMessage, readyState }: { lastJsonMessage: VehicleData | null; readyState: ReadyState } = useWebSocket(
     WS_URL,
@@ -99,11 +101,20 @@ export default function Page(): JSX.Element {
     if (lastJsonMessage === null) {
       return
     }
+
     setTemperature(lastJsonMessage.battery_temperature)
 
     const temp = history.slice(-9)
     temp.push(lastJsonMessage)
     setHistory(temp)
+
+    if (lastJsonMessage.battery_temperature < 20 || lastJsonMessage.battery_temperature > 80) {
+      logs.push({ data: "Battery Temperature unsafe", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
+      setLogs(logs)
+    } else if (lastJsonMessage.battery_temperature <= 25 || lastJsonMessage.battery_temperature >= 75) {
+      logs.push({ data: "Battery Temperature warning", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
+      setLogs(logs)
+    }
   }, [lastJsonMessage])
 
   /**
@@ -134,19 +145,46 @@ export default function Page(): JSX.Element {
           {connectionStatus}
         </Badge>
       </header>
-      <main className="flex-grow flex items-center justify-center p-8 flex-col gap-8">
+      <main className="flex-grow flex items-center justify-center p-8 gap-8 flex-wrap">
+        <div className="flex flex-col gap-8 w-full max-w-md">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-light flex items-center gap-2">
+                <Thermometer className="h-6 w-6" />
+                Live Battery Temperature
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex items-center justify-center">
+              <Numeric temp={temperature.toFixed(3)} />
+            </CardContent>
+          </Card>
+          <Chart data={history} />
+        </div>
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-2xl font-light flex items-center gap-2">
-              <Thermometer className="h-6 w-6" />
-              Live Battery Temperature
+            <CardTitle>
+              Logs
             </CardTitle>
+            <CardContent className="p-0 overflow-auto max-h-[450px]">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Message</TableHead>
+                    <TableHead>Time</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {logs.toReversed().map((content, key) =>
+                    <TableRow key={key}>
+                      <TableCell>{content.data}</TableCell>
+                      <TableCell>{content.time}</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
           </CardHeader>
-          <CardContent className="flex items-center justify-center">
-            <Numeric temp={temperature.toFixed(3)} />
-          </CardContent>
         </Card>
-        <Chart data={history} />
       </main>
     </div>
   )

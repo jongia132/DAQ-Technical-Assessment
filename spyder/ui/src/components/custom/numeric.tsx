@@ -25,15 +25,12 @@ function Numeric({ temp }: TemperatureProps) {
   }
   
   let status: number;
-  switch (true) {
-    case (temp < 20 || temp > 80):
-      status = range.unsafe;
-      break;
-    case (temp <= 25 || temp >= 75):
-      status = range.warn;
-      break;
-    default:
-      status = range.safe;
+  if (temp < 20 || temp > 80) {
+    status = range.unsafe;
+  } else if (temp <= 25 || temp >= 75) {
+    status = range.warn;
+  } else {
+    status = range.safe;
   }
 
   return (
