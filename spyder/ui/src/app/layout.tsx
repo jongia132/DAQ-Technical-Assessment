@@ -2,6 +2,7 @@ import { Roboto } from "next/font/google";
 import { Metadata } from "next"
 import { ThemeProvider } from "@/components/custom/theme-provider";
 import './globals.css'
+import DataProvider from "./data-wrapper";
 
 export const metadata: Metadata = {
     title: 'DAQ Technical Assessment',
@@ -17,17 +18,19 @@ const roboto = Roboto({ weight: "400", subsets: ["latin"] });
  * @returns {JSX.Element} The rendered RootLayout component.
  */
 export default function RootLayout({
-        children,
-    }: {
-        children: React.ReactNode
-    }) {
+    children,
+}: {
+    children: React.ReactNode
+}) {
 
     return (
         <html lang="en" suppressHydrationWarning>
             <body className={`${roboto.className}`}>
                 <ThemeProvider> {/* Provides the dark/light next js theming for the web page */}
                     <noscript>You need to enable JavaScript to run this app.</noscript>
-                    <div id="root">{children}</div>
+                    <DataProvider>
+                        <div id="root">{children}</div>
+                    </DataProvider>
                 </ThemeProvider>
             </body>
         </html>

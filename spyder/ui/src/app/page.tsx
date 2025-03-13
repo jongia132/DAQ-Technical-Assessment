@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import useWebSocket, { ReadyState } from "react-use-websocket"
+import { useState, useEffect, useContext } from "react"
+import { ReadyState } from "react-use-websocket"
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,8 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Chart } from "@/components/custom/chart"
 import Logs from "@/components/custom/logs"
-
-const WS_URL = "ws://localhost:8080"
+import { dataContext } from "./data-wrapper"
 
 export interface VehicleData {
   battery_temperature: number
@@ -59,17 +58,11 @@ export function ModeToggle() {
  * @returns {JSX.Element} The rendered page component.
  */
 export default function Page(): JSX.Element {
+  const { data, readyState } = useContext(dataContext)
   const [temperature, setTemperature] = useState<number>(0)
   const [history, setHistory] = useState<VehicleData[]>([])
   const [logs, setLogs] = useState<{ data: string, time: string }[]>([])
   const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected")
-  const { lastJsonMessage, readyState }: { lastJsonMessage: VehicleData | null; readyState: ReadyState } = useWebSocket(
-    WS_URL,
-    {
-      share: false,
-      shouldReconnect: () => true,
-    },
-  )
 
   /**
    * Effect hook to handle WebSocket connection state changes.
@@ -96,27 +89,25 @@ export default function Page(): JSX.Element {
   /**
    * Effect hook to handle incoming WebSocket messages.
    */
-  useEffect(() => {
-    if (lastJsonMessage === null) {
-      return
-    }
+  useEffect(() => { 
+    if (data === null) return
 
-    setTemperature(lastJsonMessage.battery_temperature)
+    setTemperature(data.battery_temperature)
 
     const temp = history.slice(-9)
-    temp.push(lastJsonMessage)
+    temp.push(data)
     setHistory(temp)
 
-    if (lastJsonMessage.battery_temperature < 20 || lastJsonMessage.battery_temperature > 80) {
+    if (data.battery_temperature < 20 || data.battery_temperature > 80) {
       logs.slice(-99)
-      logs.push({ data: "Battery Temperature unsafe", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
+      logs.push({ data: "Battery Temperature unsafe", time: new Date(data.timestamp).toLocaleTimeString("en-AU") })
       setLogs(logs)
-    } else if (lastJsonMessage.battery_temperature <= 25 || lastJsonMessage.battery_temperature >= 75) {
+    } else if (data.battery_temperature <= 25 || data.battery_temperature >= 75) {
       logs.slice(-99)
-      logs.push({ data: "Battery Temperature warning", time: new Date(lastJsonMessage.timestamp).toLocaleTimeString("en-AU") })
+      logs.push({ data: "Battery Temperature warning", time: new Date(data.timestamp).toLocaleTimeString("en-AU") })
       setLogs(logs)
     }
-  }, [lastJsonMessage])
+  }, [data])
 
   /**
    * Effect hook to swap the theme logo.

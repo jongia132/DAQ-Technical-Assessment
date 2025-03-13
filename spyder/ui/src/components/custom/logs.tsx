@@ -10,7 +10,7 @@ export default function Logs({ logs }: { logs: { data: string, time: string }[] 
 				</TableRow>
 			</TableHeader>
 			<TableBody>
-				{logs.toReversed().map((content, key) =>
+				{logs.map((content, key) =>
 					<TableRow key={key}>
 						<TableCell>{content.data}</TableCell>
 						<TableCell>{content.time}</TableCell>

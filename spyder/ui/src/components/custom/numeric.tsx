@@ -18,6 +18,7 @@ function Numeric({ temp }: TemperatureProps) {
   //  - (or) other solution
 
   // Justify your choice of implementation in brainstorming.md
+
   enum range {
     unsafe,
     warn,

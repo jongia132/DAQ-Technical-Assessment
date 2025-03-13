@@ -21,6 +21,8 @@ I was going to originally have the build and start commands watch the src folder
 
 5. Using tailwind text colour classes, I used the provided cn function to conditionally apply the correct class based on the temp range. I used switch statements as they are more easy to extend if additional ranges are requested which use Typescript enums for the different ranges.
 
+6. I used the createContext hook with some dummy values. I then used a useState prop to allow the data to update in real time based on the webhook. The context provider was created as a client component to allow for the use of useContext and the websocket connection. I then assigned the provider to the layout file to all features within the application will be able to access the data prop which parses away null values.
+
 ### Additional Features
 1. Light/Dark mode toggle using the provided component from shadcn since it implemented well with the existing next-theme toggle.
 
